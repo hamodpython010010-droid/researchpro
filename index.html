@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ResearchPro | منشئ الأبحاث</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f4f7fb;color:#172033}header{background:#2563eb;color:#fff;padding:24px;text-align:center}header h1{margin:0 0 8px}main{max-width:1100px;margin:24px auto;padding:0 16px}.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 5px 20px #0000000d}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}label{font-weight:700;display:block;margin-bottom:6px}input,select,textarea{width:100%;padding:11px;border:1px solid #d7deea;border-radius:10px;font:inherit}textarea{min-height:110px;resize:vertical}.full{grid-column:1/-1}button{border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer;background:#2563eb;color:#fff;margin:6px 4px 0 0}.secondary{background:#e8eef9;color:#172033}.danger{background:#dc2626}.status{margin-top:10px;font-weight:700}.research{line-height:1.9}.research table{width:100%;border-collapse:collapse}.research th,.research td{border:1px solid #ccd5e3;padding:8px}.toc a{display:block;margin:5px 0;color:#2563eb;text-decoration:none}.hidden{display:none}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><h1>ResearchPro</h1><div>منشئ أبحاث أكاديمية بالبحث على الويب</div></header>
+<main>
+<section class="card">
+<h2>بيانات البحث</h2>
+<div class="grid">
+<div class="full"><label>موضوع البحث *</label><textarea id="prompt" placeholder="اكتب موضوع البحث بالتفصيل..."></textarea></div>
+<div><label>اسم الطالب</label><input id="student"></div>
+<div><label>نوع المؤسسة</label><select id="institutionType"><option>جامعة حكومية</option><option>جامعة خاصة</option><option>جامعة أهلية</option><option>جامعة تكنولوجية</option><option>أكاديمية</option><option>فرع جامعة دولية</option><option>معهد عالي</option></select></div>
+<div><label>الجامعة / المؤسسة</label><select id="university"><option>غير محددة</option><option>جامعة القاهرة</option><option>جامعة الإسكندرية</option><option>جامعة عين شمس</option><option>جامعة المنصورة</option><option>جامعة حلوان</option><option>جامعة دمنهور</option><option>أكاديمية السادات للعلوم الإدارية</option><option>جامعة الإسكندرية الأهلية</option><option>جامعة الجلالة</option><option>جامعة العلمين الدولية</option><option>جامعة مصر للمعلوماتية</option><option>جامعة النيل</option><option>الجامعة المصرية اليابانية للعلوم والتكنولوجيا</option><option>الجامعة الأمريكية بالقاهرة</option></select></div>
+<div><label>الكلية</label><select id="college"><option>حاسبات ومعلومات / علوم حاسب</option><option>الذكاء الاصطناعي</option><option>الهندسة</option><option>العلوم</option><option>التجارة</option><option>إدارة الأعمال</option><option>الاقتصاد والعلوم السياسية</option><option>الحقوق</option><option>الآداب</option><option>التربية</option><option>التربية الرياضية</option><option>الإعلام</option><option>الطب</option><option>الصيدلة</option><option>التمريض</option><option>الزراعة</option><option>السياحة والفنادق</option></select></div>
+<div><label>القسم</label><input id="department" placeholder="مثال: الأمن السيبراني"></div>
+<div><label>المادة</label><input id="subject" placeholder="مثال: Cyber Security"></div>
+<div><label>اسم المشرف</label><input id="supervisor"></div>
+<div><label>المستوى الدراسي</label><select id="academicLevel"><option>الفرقة الأولى</option><option>الفرقة الثانية</option><option>الفرقة الثالثة</option><option>الفرقة الرابعة</option><option>دراسات عليا</option></select></div>
+<div><label>طول البحث</label><select id="length"><option>قصير</option><option selected>متوسط</option><option>طويل</option></select></div>
+<div><label>لغة البحث</label><select id="language"><option>العربية</option><option>English</option></select></div>
+<div class="full"><label>متطلبات إضافية</label><textarea id="requirements" placeholder="مثال: أريد مراجع حديثة، أمثلة عملية، وتركيزًا على مصر..."></textarea></div>
+</div>
+<button id="generate">إنشاء البحث الحقيقي</button><button class="secondary" id="clear">مسح</button><div id="status" class="status"></div>
+</section>
+<section id="resultCard" class="card hidden"><div><button class="secondary" id="copy">نسخ البحث</button><button class="secondary" id="print">طباعة / حفظ PDF</button><button class="secondary" id="newResearch">بحث جديد</button></div><hr><div id="toc" class="toc"></div><article id="research" class="research"></article></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function safeHtml(html){const t=document.createElement('template');t.innerHTML=html; t.content.querySelectorAll('script,style,iframe,object,embed,form,input,button').forEach(x=>x.remove()); t.content.querySelectorAll('*').forEach(el=>{[...el.attributes].forEach(a=>{if(/^on/i.test(a.name)||/^javascript:/i.test(a.value))el.removeAttribute(a.name)})});return t.innerHTML}
+$('generate').onclick=async()=>{const prompt=$('prompt').value.trim();if(!prompt){$('status').textContent='اكتب موضوع البحث أولًا.';return} $('generate').disabled=true;$('status').textContent='جاري البحث على الويب وكتابة البحث...';try{const body={prompt,student:$('student').value,university:$('university').value,college:$('college').value,department:$('department').value,subject:$('subject').value,supervisor:$('supervisor').value,academicLevel:$('academicLevel').value,length:$('length').value,language:$('language').value,requirements:$('requirements').value};const r=await fetch('/api/generate-research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||'حدث خطأ');$('research').innerHTML=safeHtml(d.research);buildToc();$('resultCard').classList.remove('hidden');$('status').textContent='تم إنشاء البحث.';$('resultCard').scrollIntoView({behavior:'smooth'})}catch(e){$('status').textContent='خطأ: '+e.message}finally{$('generate').disabled=false}};
+function buildToc(){const heads=[...$('research').querySelectorAll('h2')];$('toc').innerHTML=heads.length?'<h3>فهرس البحث</h3>':'';heads.forEach((h,i)=>{const id='section-'+i;h.id=id;const a=document.createElement('a');a.href='#'+id;a.textContent=h.textContent;$('toc').appendChild(a)})}
+$('copy').onclick=async()=>{await navigator.clipboard.writeText($('research').innerText);$('status').textContent='تم نسخ البحث.'};$('print').onclick=()=>window.print();$('newResearch').onclick=()=>{$('resultCard').classList.add('hidden');$('prompt').focus();window.scrollTo({top:0,behavior:'smooth'})};$('clear').onclick=()=>location.reload();
+</script>
+</body></html>
